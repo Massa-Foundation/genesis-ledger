@@ -122,7 +122,8 @@ def generate_initial_node_files(input_paths):
         vesting_event_values = []
         minimal_wait = datetime.timedelta(days=2)  # do not schedule any events before 2 days after genesis
         for i in range(vesting_event_count):
-            event_date = launch_date
+            noise = datetime.timedelta(seconds=random.uniform(0, linear_release_interval.total_seconds()))
+            event_date = launch_date + linear_release_interval * (i+1) - noise
             while event_date < launch_date + minimal_wait:
                 noise = datetime.timedelta(seconds=random.uniform(0, linear_release_interval.total_seconds()))
                 event_date = launch_date + linear_release_interval * (i+1) - noise
