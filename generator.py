@@ -20,7 +20,10 @@ def check_amount(d):
     # check precision loss
     if d.quantize(Decimal("1.000000000")) != d:
         raise Exception("Precision loss detected.")
-    
+
+def amount_to_string(amount):
+    check_amount(amount)
+    return format(amount, 'f')
 
 def datetime_to_massatime(dt):
     return int(datetime.datetime.timestamp(dt)*1000)
@@ -220,7 +223,7 @@ def generate_initial_node_files(input_paths):
     # save initial coins
     formatted_initial_coins = {
         addr: {
-            "balance": str(balance),
+            "balance": amount_to_string(balance),
             "datastore": [],
             "bytecode": []
         } for addr, balance in initial_coins.items()
@@ -239,7 +242,7 @@ def generate_initial_node_files(input_paths):
         for deferred_credit in addr_deferred_credits:
             formatted_initial_deferred_credits[addr].append({
                 "slot": massatime_to_slot(launch_massatime, datetime_to_massatime(deferred_credit["date"])),
-                "amount": str(deferred_credit["amount"])
+                "amount": amount_to_string(deferred_credit["amount"])
             })
     with open("node_initial_setup/deferred_credits.json", "w") as f:
         json.dump(formatted_initial_deferred_credits, f, indent=1)
