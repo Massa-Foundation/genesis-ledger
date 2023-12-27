@@ -75,7 +75,7 @@ def generate_initial_node_files(input_paths):
             "obtainable_as_rolls": False
         },
         "quest_coins": {
-            "initial_release_ratio": Decimal("0.30"),
+            "initial_release_ratio": Decimal("1.0"),
             "linear_vesting_duration": (launch_date + relativedelta.relativedelta(years=2)) - launch_date,
             "obtainable_as_rolls": False
         }
@@ -83,7 +83,7 @@ def generate_initial_node_files(input_paths):
     max_vesting_duration = max([coin_category_info["linear_vesting_duration"] for coin_category_info in coin_categories.values()])
 
     # interval at which the linear vesting is released
-    linear_release_interval = datetime.timedelta(days=7)
+    linear_release_interval = datetime.timedelta(weeks=2)
 
     # aggregate all the data from the input paths
     input_data = {}
