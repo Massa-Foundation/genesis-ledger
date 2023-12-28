@@ -123,8 +123,8 @@ class MassaAmount:
 
 class Slot:
     def __init__(self, period, thread):
-        self.period = period
-        self.thread = thread
+        self.period = int(period)
+        self.thread = int(thread)
 
     def __eq__(self, other):
         return self.period == other.period and self.thread == other.thread
@@ -316,8 +316,8 @@ def process_addr(addr, addr_item, coin_categories):
     deferred_credits = [
         {
             "slot": {
-                "period": slot.period,
-                "thread": slot.thread
+                "period": int(slot.period),
+                "thread": int(slot.thread)
             },
             "amount": str(amount)
         }
