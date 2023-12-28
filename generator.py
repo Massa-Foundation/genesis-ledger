@@ -4,6 +4,7 @@ import random
 from typing import Any
 from dateutil import relativedelta
 from decimal import Decimal
+from itertools import accumulate
 
 
 def datetime_to_massatime(dt):
@@ -60,6 +61,9 @@ class MassaAmount:
             return MassaAmount(self.dec - other.dec)
         else:
             return MassaAmount(self.dec - Decimal(other))
+
+    def __mul__(self, other):
+        return MassaAmount(self.dec * Decimal(other))
 
     # in place add
     def __iadd__(self, other):
@@ -119,6 +123,9 @@ class MassaAmount:
 
     def __repr__(self):
         return str(self)
+
+    def to_float(self):
+        return float(self.dec)
 
 
 class Slot:
@@ -436,6 +443,66 @@ def generate_initial_node_files(input_paths):
         json.dump(initial_deferred_credits, f, sort_keys=True, indent=1)
 
 
+# plot the supply
+def plot_supply():
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as ticker
+
+    # load the initial ledger
+    initial_ledger = {}
+    with open("node_initial_setup/initial_ledger.json", "r") as f:
+        initial_ledger = json.load(f)
+
+    # load the deferred credits
+    deferred_credits = {}
+    with open("node_initial_setup/deferred_credits.json", "r") as f:
+        deferred_credits = json.load(f)
+
+    # load the initial rolls
+    initial_rolls = {}
+    with open("node_initial_setup/initial_rolls.json", "r") as f:
+        initial_rolls = json.load(f)
+
+    # compute the supply over time
+    initial_release = sum([MassaAmount(v.get("balance", "0"))
+                          for v in initial_ledger.values()], MassaAmount("0"))
+    initial_release += sum([MassaAmount("100") * int(v)
+                           for v in initial_rolls.values()], MassaAmount("0"))
+    release_history = {genesis_timestamp: initial_release}
+    for addr_deferred_credits in deferred_credits.values():
+        for addr_deferred_credit in addr_deferred_credits:
+            timestamp = Slot(
+                addr_deferred_credit["slot"]["period"], addr_deferred_credit["slot"]["thread"]).to_massatime()
+            if timestamp not in release_history:
+                release_history[timestamp] = MassaAmount("0")
+            release_history[timestamp] += MassaAmount(
+                addr_deferred_credit["amount"])
+
+    # sort by time
+    release_history = list(release_history.items())
+    release_history.sort(key=lambda x: x[0])
+    release_history_t, release_history_v = list(zip(*[
+        (massatime_to_datetime(t), v)
+        for t, v in release_history
+    ]))
+    release_history_v = list(accumulate(release_history_v))
+    release_history_v = [v.to_float() for v in release_history_v]
+
+    # plot the supply over time
+    plt.plot(release_history_t, release_history_v)
+    plt.xlabel('Date')
+    plt.ylabel('Unlocked supply')
+    plt.ylim(-1, None)
+    plt.gca().get_yaxis().set_major_formatter(
+        ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+    plt.grid(True, which='both', axis='both')
+    plt.show()
+
+
+# generate
 generate_initial_node_files([
     "input_listings/dashboard_data.json"
 ])
+
+# plot
+plot_supply()
