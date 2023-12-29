@@ -489,10 +489,11 @@ def plot_supply():
     release_history_v = [v.to_float() for v in release_history_v]
 
     # plot the supply over time
+    plt.fill_between(release_history_t, release_history_v, 0, alpha=.2)
     plt.plot(release_history_t, release_history_v)
     plt.xlabel('Date')
     plt.ylabel('Unlocked supply')
-    plt.ylim(-1, None)
+    plt.ylim(0, None)
     plt.gca().get_yaxis().set_major_formatter(
         ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
     plt.grid(True, which='both', axis='both')
