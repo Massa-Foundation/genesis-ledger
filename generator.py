@@ -374,6 +374,16 @@ def generate_initial_node_files(input_paths):
             "linear_vesting_duration": relativedelta.relativedelta(years=2),
             "obtainable_as_rolls": False
         },
+        "main_programs": {
+            "initial_release_ratio": Decimal("0.05"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=5),
+            "obtainable_as_rolls": False
+        },
+        "public_sale": {
+            "initial_release_ratio": Decimal("1.0"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=0),
+            "obtainable_as_rolls": False
+        },
         "decentralization_program": {
             "initial_release_ratio": Decimal("0.0"),
             "cliff_duration": relativedelta.relativedelta(years=2),
@@ -487,6 +497,7 @@ def plot_supply():
     ]))
     release_history_v = list(accumulate(release_history_v))
     release_history_v = [v.to_float() for v in release_history_v]
+    print("Total supply:", release_history_v[-1])
 
     # plot the supply over time
     plt.fill_between(release_history_t, release_history_v, 0, alpha=.2)
@@ -502,7 +513,8 @@ def plot_supply():
 
 # generate
 generate_initial_node_files([
-    "input_listings/dashboard_data.json"
+    "input_listings/dashboard_data.json",
+    "input_listings/foundation.json"
 ])
 
 # plot
