@@ -496,8 +496,8 @@ def plot_supply():
         for t, v in release_history
     ]))
     release_history_v = list(accumulate(release_history_v))
-    release_history_v = [v.to_float() for v in release_history_v]
     print("Total supply:", release_history_v[-1])
+    release_history_v = [v.to_float() for v in release_history_v]
 
     # plot the supply over time
     plt.fill_between(release_history_t, release_history_v, 0, alpha=.2)
