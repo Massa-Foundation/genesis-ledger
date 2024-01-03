@@ -1,11 +1,14 @@
 {
   "AU1hRpQvj9GNai6V9o1fFBT3qv5ntH7KKxFHcJeCdv2QKoJhoeRU": {
-    "main_programs": "306208672.762376156"
+    "main_programs": "306208672.762376156",
+    "disable_noise": true
   },
   "AU12AqEkrjGt9fqc7VdYhHW4LjukYhuYULKq6hNWvgZeJBVDC1an2": {
-    "public_sale": "30000000"
+    "public_sale": "30000000",
+    "disable_noise": true
   },
   "AU125q4Jj22jzwavJZHDtYyrdSbhCCh3sK96qm4ox31AzcVmSWvvF": {
-    "decentralization_program": "300000000"
+    "decentralization_program": "300000000",
+    "disable_noise": true
   }
 }

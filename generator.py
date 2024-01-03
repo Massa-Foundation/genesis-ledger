@@ -5,7 +5,96 @@ from typing import Any
 from dateutil import relativedelta
 from decimal import Decimal
 from itertools import accumulate
+import base58
 
+
+def get_vesting_categories():
+    return {
+        # Coins for node runners, obtainable as rolls
+        "node_running_coins": {
+            "initial_release_ratio": Decimal("0.30"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=2),
+            "obtainable_as_rolls": True
+        },
+
+        # Coins for ambassadors
+        "ambassador_coins": {
+            "initial_release_ratio": Decimal("0.30"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=2),
+            "obtainable_as_rolls": False
+        },
+
+        # Coins for dashboard questers
+        "quest_coins": {
+            "initial_release_ratio": Decimal("1.0"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=0),
+            "obtainable_as_rolls": False
+        },
+
+        # Coins for the main programs of the Massa Foundation (eg.community, airdrops, grants)
+        "main_programs": {
+            "initial_release_ratio": Decimal("0.05"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=5),
+            "obtainable_as_rolls": False
+        },
+
+        # Coins for the public sale
+        "public_sale": {
+            "initial_release_ratio": Decimal("1.0"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=0),
+            "obtainable_as_rolls": False
+        },
+
+        # Long-term locked coins for planned decentralization programs (eg. 100k nodes program)
+        "decentralization_program": {
+            "initial_release_ratio": Decimal("0.0"),
+            "cliff_duration": relativedelta.relativedelta(years=2),
+            "linear_vesting_duration": relativedelta.relativedelta(years=3),
+            "obtainable_as_rolls": False
+        },
+
+        # Coins for private backers
+        "backers": {
+            "initial_release_ratio": Decimal("0.30"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=2),
+            "obtainable_as_rolls": False
+        },
+
+        # Coins for private backers that did not provide their address in time.
+        # Those coins are exclusively destined to be sent to the remaining backers
+        # through a vesting smart contract following the same vesting scheme as "backers"
+        # as soon as the remaining backer addresses are obtained.
+        "late_backers_to_vest": { 
+            "initial_release_ratio": Decimal("1.0"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=0),
+            "obtainable_as_rolls": False
+        },
+
+        # Remainder of the private distributions (eg. advisors, early grants)
+        "remainder_private_distribution": {
+            "initial_release_ratio": Decimal("0.30"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=2),
+            "obtainable_as_rolls": False
+        },
+
+        # Coins for Massa Labs (eg. team, products, research, development)
+        "massa_labs": {
+            "initial_release_ratio": Decimal("0.10"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=5),
+            "obtainable_as_rolls": True
+        },
+
+        # Coins for the founders.
+        # For legal reasons, the coins cannot be directly vested towards founder accounts.
+        # Instead, this category will be fully moved to a triple vesting smart contract that
+        # will make the coins progressively claimable by the founders.
+        # The vesting scheme is: 5% initial then 5-year linear
+        "founders": {
+            "initial_release_ratio": Decimal("1.0"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=0),
+            "obtainable_as_rolls": False
+        }
+    }
 
 def datetime_to_massatime(dt):
     return int(datetime.datetime.timestamp(dt)*1000)
@@ -14,6 +103,17 @@ def datetime_to_massatime(dt):
 def massatime_to_datetime(mt):
     return datetime.datetime.fromtimestamp(mt / 1000, tz=datetime.timezone.utc)
 
+def assert_address_is_valid(addr):
+    if addr[0] != "A":
+        raise Exception("Address does not start with A")
+    if addr[1] not in ["U", "S"]:
+        raise Exception("Address is not from a valid category")
+    decoded = base58.b58decode_check(addr[2:])
+    if decoded[0] != 0:
+        raise Exception("Address version invalid")
+    addr_hash = decoded[1:]
+    if len(addr_hash) != 32:
+        raise Exception("Address hash invalid")
 
 # ensure determinism
 random.seed(0)
@@ -178,7 +278,7 @@ class Slot:
             return Slot(self.period, self.thread-1)
 
 
-def generate_vesting_events(coin_categories):
+def generate_vesting_events(coin_categories, disable_noise):
     # interval at which the linear vesting is released
     linear_release_interval = relativedelta.relativedelta(weeks=2)
     # do not schedule any events before a certain time after genesis
@@ -199,7 +299,10 @@ def generate_vesting_events(coin_categories):
         evt_index += 1
         datetime_cursor = genesis_datetime + evt_index * linear_release_interval
         cursor_mt = datetime_to_massatime(datetime_cursor)
-        mt_noise = random.uniform(0, cursor_mt - prev_mt)
+        if disable_noise is True:
+            mt_noise = 0
+        else:
+            mt_noise = random.uniform(0, cursor_mt - prev_mt)
         event_slot = Slot.closest_slot_before_massatime(cursor_mt - mt_noise)
         vesting_events[event_slot] = {
             "datetime": event_slot.to_datetime(),
@@ -213,8 +316,11 @@ def generate_vesting_events(coin_categories):
 
 # process one address
 def process_addr(addr, addr_item, coin_categories):
+    # check address validity
+    assert_address_is_valid(addr)
+
     # create vesting events for this address
-    vesting_events = generate_vesting_events(coin_categories)
+    vesting_events = generate_vesting_events(coin_categories, addr_item.get("disable_noise") or False)
     cliff_vesting_events = {}
 
     # initial coins not dedicated to staking for this address
@@ -225,8 +331,8 @@ def process_addr(addr, addr_item, coin_categories):
 
     # iterate over all the coin categories for this address
     for coin_category_name, coin_category_amount_str in addr_item.items():
-        # this is not really a category
-        if coin_category_name == "wants_initial_rolls":
+        # those are not really categories
+        if coin_category_name in ["wants_initial_rolls", "disable_noise"]:
             continue
 
         # get the coin category information
@@ -358,39 +464,7 @@ def generate_initial_node_files(input_paths):
     print("Launch massatime:", genesis_timestamp)
 
     # list of coin categories, each with its vesting parameters
-    coin_categories = {
-        "node_running_coins": {
-            "initial_release_ratio": Decimal("0.30"),
-            "linear_vesting_duration": relativedelta.relativedelta(years=2),
-            "obtainable_as_rolls": True
-        },
-        "ambassador_coins": {
-            "initial_release_ratio": Decimal("0.30"),
-            "linear_vesting_duration": relativedelta.relativedelta(years=2),
-            "obtainable_as_rolls": False
-        },
-        "quest_coins": {
-            "initial_release_ratio": Decimal("1.0"),
-            "linear_vesting_duration": relativedelta.relativedelta(years=2),
-            "obtainable_as_rolls": False
-        },
-        "main_programs": {
-            "initial_release_ratio": Decimal("0.05"),
-            "linear_vesting_duration": relativedelta.relativedelta(years=5),
-            "obtainable_as_rolls": False
-        },
-        "public_sale": {
-            "initial_release_ratio": Decimal("1.0"),
-            "linear_vesting_duration": relativedelta.relativedelta(years=0),
-            "obtainable_as_rolls": False
-        },
-        "decentralization_program": {
-            "initial_release_ratio": Decimal("0.0"),
-            "cliff_duration": relativedelta.relativedelta(years=2),
-            "linear_vesting_duration": relativedelta.relativedelta(years=3),
-            "obtainable_as_rolls": False
-        }
-    }
+    coin_categories = get_vesting_categories()
 
     # compute cliff and vesting end times
     for coin_category_info in coin_categories.values():
@@ -514,7 +588,10 @@ def plot_supply():
 # generate
 generate_initial_node_files([
     "input_listings/dashboard_data.json",
-    "input_listings/foundation.json"
+    "input_listings/foundation.json",
+    "input_listings/backers.json",
+    "input_listings/labs.json",
+    "input_listings/founders.json"
 ])
 
 # plot
