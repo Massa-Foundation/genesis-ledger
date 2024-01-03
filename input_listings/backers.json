@@ -212,6 +212,9 @@
   "AU1VdekHE41FEvi2qU5pKrL9qb48fPGxPHPUFwigHR1VpPK7ikmZ": {
     "backers": "200000"
   },
+  "AU12AF9CuUKXV5URBzrJ6btaBr7UaxGzx59Smc86CshgQ7umNvZRx": {
+    "backers": "400000"
+  },
   "AU1QNaoaYUc18gGo4Y1eU7DHR6uquPpmweYqtX4fT3FecZAQX6JF": {
     "backers": "1400000"
   },
@@ -272,7 +275,7 @@
 
 
   "AU1PGvG4x1rmFaYBgSNVmgpPDkWvGtNqS2Jc7BjupmVjkce8dBai": {
-    "late_backers_to_vest": "72467226",
+    "late_backers_to_vest": "72067226",
     "disable_noise": true
   },
 
