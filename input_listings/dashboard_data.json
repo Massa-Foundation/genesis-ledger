@@ -68919,12 +68919,6 @@
   "node_running_coins": "0",
   "quest_coins": "138.613861386"
  },
- "AU1AWfST2KpivhZQFjVkuvDCPVVCAtX21FbnVpiL1NggtHeEY7TH": {
-  "ambassador_coins": "41667",
-  "node_running_coins": "20042.774757461",
-  "quest_coins": "0",
-  "wants_initial_rolls": true
- },
  "AU1AXENegKHbYjeoKyhqPFFLjG4bC2EU6bTv6xETw14vxygavJsJ": {
   "ambassador_coins": "0",
   "node_running_coins": "6602.901721524",
@@ -83736,6 +83730,12 @@
   "ambassador_coins": "0",
   "node_running_coins": "1949.575331798",
   "quest_coins": "0"
+ },
+ "AU1QF5Jm4wcKmVe1BFveKSd9PXrc9KkAkv2KYxxELKFisFq9RWeT": {
+  "ambassador_coins": "41667",
+  "node_running_coins": "20042.774757461",
+  "quest_coins": "0",
+  "wants_initial_rolls": true
  },
  "AU1QFWsqbdhHZMiTBWpABW5kiMNFDS8twQTUXKQFwQKjZtPsXxvG": {
   "ambassador_coins": "0",
