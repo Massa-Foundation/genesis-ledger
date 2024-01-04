@@ -257,6 +257,9 @@
   "AU1VsxuGVJA8GJdu9KgrMhBvzYXJuKWpDkAqoJkhNrPzYgNjvGcr": {
     "backers": "555556"
   },
+  "AU1uVE1EEmtjhQ65zHUBX4oGC5NeezbwNFdYNLijAyZ8tCkcFEyJ": {
+    "backers": "746466.67"
+  },
   "AU12KcNAPtJr4piWzEDAJWGTVzn3kHp349QKDWnT3iqgTWCreEyd6": {
     "backers": "24444"
   },
@@ -278,12 +281,12 @@
 
 
   "AU1PGvG4x1rmFaYBgSNVmgpPDkWvGtNqS2Jc7BjupmVjkce8dBai": {
-    "late_backers_to_vest": "71867226",
+    "late_backers_to_vest": "68313468",
     "disable_noise": true
   },
 
   "AU12Vi9V6Fsq9HMh9ge88WJ5cgymBGc3oUX2F6WpRqA5HdabPcPt5": {
-    "remainder_private_distribution": "35000000",
+    "remainder_private_distribution": "37807291.33",
     "disable_noise": true
   }
 }
