@@ -457,11 +457,11 @@ def process_addr(addr, addr_item, coin_categories):
 
 # generate the initial node files
 def generate_initial_node_files(input_paths):
-    with open("node_initial_setup/launch_timestamp.json", "w") as f:
+    with open("node_initial_setup/genesis_timestamp.json", "w") as f:
         json.dump({
-            "launch_timestamp": genesis_timestamp
+            "genesis_timestamp": genesis_timestamp
         }, f, indent=1)
-    print("Launch massatime:", genesis_timestamp)
+    print("Genesis timestamp:", genesis_timestamp)
 
     # list of coin categories, each with its vesting parameters
     coin_categories = get_vesting_categories()
