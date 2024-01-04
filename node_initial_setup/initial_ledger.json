@@ -63729,6 +63729,11 @@
   "bytecode": [],
   "datastore": []
  },
+ "AU165ik1tA6BJmZjWcKPGk8UmjV5Bm71CFyVvzAq2X2qXqKhDumH": {
+  "balance": "60000.000000000",
+  "bytecode": [],
+  "datastore": []
+ },
  "AU165rW5K7BwnZKu1ATQLh7NVzhyZkZgB4rmA6JyskGVXWWKboyW": {
   "balance": "161.530512366",
   "bytecode": [],
@@ -82285,7 +82290,7 @@
   "datastore": []
  },
  "AU1PGvG4x1rmFaYBgSNVmgpPDkWvGtNqS2Jc7BjupmVjkce8dBai": {
-  "balance": "72067226.000000000",
+  "balance": "71867226.000000000",
   "bytecode": [],
   "datastore": []
  },
