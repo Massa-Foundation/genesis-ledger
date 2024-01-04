@@ -1,11 +1,20 @@
 {
   "AU12hdvxeNgEUmfpktdzRa9VNfNZizGnhkjRkjRXA2ue2DnRpJuPZ": {
-    "massa_labs": "35000000",
+    "massa_labs": "33250000",
+    "disable_noise": true
+  },
+  "AU12CQ2eoz62U4EkB7pHm4est5aH5AuA3AdieAQCsXp5y1oNnRB5o": {
+    "massa_labs": "33250000",
+    "disable_noise": true
+  },
+
+  "AU12L4gaQ8j8j5yBt2jSmcsmu51yZW2gLjnZr5rAWnjKJDNacR3jp": {
+    "massa_labs_staking": "1750000",
     "disable_noise": true,
     "wants_initial_rolls": true
   },
-  "AU12CQ2eoz62U4EkB7pHm4est5aH5AuA3AdieAQCsXp5y1oNnRB5o": {
-    "massa_labs": "35000000",
+  "AU128Rexxftc1jYhyouTesxjPqeezEHh5LUAzNaAfqDo1dWRgPH8m": {
+    "massa_labs_staking": "1750000",
     "disable_noise": true,
     "wants_initial_rolls": true
   }

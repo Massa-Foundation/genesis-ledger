@@ -79,8 +79,15 @@ def get_vesting_categories():
 
         # Coins for Massa Labs (eg. team, products, research, development)
         "massa_labs": {
-            "initial_release_ratio": Decimal("0.10"),
+            "initial_release_ratio": Decimal("0.0"),
             "linear_vesting_duration": relativedelta.relativedelta(years=5),
+            "obtainable_as_rolls": False
+        },
+
+        # Coins for Massa Labs staking
+        "massa_labs_staking": {
+            "initial_release_ratio": Decimal("1.0"),
+            "linear_vesting_duration": relativedelta.relativedelta(years=0),
             "obtainable_as_rolls": True
         },
 
