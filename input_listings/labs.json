@@ -1,10 +1,12 @@
 {
   "AU12hdvxeNgEUmfpktdzRa9VNfNZizGnhkjRkjRXA2ue2DnRpJuPZ": {
     "massa_labs": "35000000",
-    "disable_noise": true
+    "disable_noise": true,
+    "wants_initial_rolls": true
   },
   "AU12CQ2eoz62U4EkB7pHm4est5aH5AuA3AdieAQCsXp5y1oNnRB5o": {
     "massa_labs": "35000000",
-    "disable_noise": true
+    "disable_noise": true,
+    "wants_initial_rolls": true
   }
 }
