@@ -287,7 +287,7 @@ class Slot:
 
 def generate_vesting_events(coin_categories, disable_noise):
     # interval at which the linear vesting is released
-    linear_release_interval = relativedelta.relativedelta(weeks=2)
+    linear_release_interval = relativedelta.relativedelta(months=1)
     # do not schedule any events before a certain time after genesis
     minimal_wait = datetime.timedelta(days=2)
 
