@@ -64,7 +64,7 @@ def get_vesting_categories():
         # Those coins are exclusively destined to be sent to the remaining backers
         # through a vesting smart contract following the same vesting scheme as "backers"
         # as soon as the remaining backer addresses are obtained.
-        "late_backers_to_vest": { 
+        "late_backers_to_vest": {
             "initial_release_ratio": Decimal("1.0"),
             "linear_vesting_duration": relativedelta.relativedelta(years=0),
             "obtainable_as_rolls": False
@@ -103,12 +103,14 @@ def get_vesting_categories():
         }
     }
 
+
 def datetime_to_massatime(dt):
     return int(datetime.datetime.timestamp(dt)*1000)
 
 
 def massatime_to_datetime(mt):
     return datetime.datetime.fromtimestamp(mt / 1000, tz=datetime.timezone.utc)
+
 
 def assert_address_is_valid(addr):
     if addr[0] != "A":
@@ -121,6 +123,7 @@ def assert_address_is_valid(addr):
     addr_hash = decoded[1:]
     if len(addr_hash) != 32:
         raise Exception("Address hash invalid")
+
 
 # ensure determinism
 random.seed(0)
@@ -327,7 +330,8 @@ def process_addr(addr, addr_item, coin_categories):
     assert_address_is_valid(addr)
 
     # create vesting events for this address
-    vesting_events = generate_vesting_events(coin_categories, addr_item.get("disable_noise") or False)
+    vesting_events = generate_vesting_events(
+        coin_categories, addr_item.get("disable_noise") or False)
     cliff_vesting_events = {}
 
     # initial coins not dedicated to staking for this address
@@ -542,3 +546,25 @@ generate_initial_node_files([
     "input_listings/labs.json",
     "input_listings/founders.json"
 ])
+
+
+# check total supply
+def check_total_supply():
+    with open("node_initial_setup/initial_ledger.json", "r") as f:
+        initial_ledger = sum([MassaAmount(v["balance"])
+                             for _, v in json.load(f).items()], MassaAmount("0"))
+    with open("node_initial_setup/initial_rolls.json", "r") as f:
+        initial_rolls = sum([MassaAmount("100") * Decimal(v)
+                            for _, v in json.load(f).items()], MassaAmount("0"))
+    with open("node_initial_setup/deferred_credits.json", "r") as f:
+        deferred_credits = sum([sum([MassaAmount(v["amount"]) for v in u], MassaAmount(
+            "0")) for _, u in json.load(f).items()], MassaAmount("0"))
+    total_supply = initial_ledger + initial_rolls + deferred_credits
+    expected_total_supply = MassaAmount("1000000000")
+    print("TOTAL SUPPLY:", total_supply)
+    if total_supply != expected_total_supply:
+        raise Exception(
+            f"Total supply is {total_supply} but should be {expected_total_supply}")
+
+
+check_total_supply()
